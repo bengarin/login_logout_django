@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'home' %}">Product</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <button type="button" class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#addCategory">
+            add Category
+          </button>
+          <button type="button" class="btn btn-primary mx-2" data-bs-toggle="modal" data-bs-target="#addSubCategory">
+            add sub Category
+          </button>
+          
+
+        </ul>
+        <div class="mx-start d-flex gap-5">
+          <p>{{request.user}}</p>
+          <a href="{% url 'logout' %}">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>

@@ -1,0 +1,44 @@
+
+     <!-- Modal -->
+     <div class="modal fade" id="addCategory" tabindex="-1" aria-labelledby="addCategory" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Ajouter nouvel category</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addcategory" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="cat"/> 
+                    {{formsCategory}}
+                </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="btnaddcategory">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="addSubCategory" tabindex="-1" aria-labelledby="addSubCategory" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="addSubcategory" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="subcat"/> 
+                {{formsSubCategory}}
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary" id="btnaddSubcategory">Save changes</button>
+            </div>
+          </div>
+        </div>
+      </div>

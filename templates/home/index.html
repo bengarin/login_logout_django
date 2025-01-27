@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">name</th>
+            <th scope="col">price</th>
+            <th scope="col">quantity</th>
+        </tr>
+    </thead>
+    <tbody id="tbody_product"></tbody>
+</table>
+
+<div class="container" id="form_container">
+    <form id="form_product_1">
+        <div class="row d-flex align-items-center">
+            <div class="col mx-1 d-flex align-items-center text-center">
+                <p class="text-center">add new product:</p>
+            </div>
+            <div class="col mx-1">
+                <input type="text" class="form-control" id="name_1" name="name" placeholder="name" />
+            </div>
+            <div class="col mx-1">
+                <input type="text" class="form-control" id="price_1" name="price" placeholder="price"/>
+            </div>
+            <div class="col mx-1">
+                <input type="text" class="form-control" id="quantity_1" name="quantity" placeholder="quantite"/>
+            </div>
+            <div class="col mx-1">
+                <select id="categories_1">
+                    <option>--------</option>
+                    {% for categories in categories %}
+                    <option value="{{categories.id}}">{{categories}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col mx-1">
+                <select id="subcategories_1" name="subcategory">
+                    <option>--------</option>
+                </select>
+            </div>
+            <div class="col mx-1">
+                <button class="btn btn-primary" type="button" id="addproduct_1">submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<button id="dublicate" class="btn btn-secondary">Duplicate Form</button>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    // Fonction pour dupliquer un formulaire vierge
+    $('#dublicate').on('click', function() {
+        // Récupère le formulaire à cloner
+        var formCount = $('#form_container form').length + 1;
+        var formClone = $('#form_product_1').clone();
+
+        // Réinitialise les champs du formulaire cloné
+        formClone.find('input').val('');
+        formClone.find('select').val('--------');
+        formClone.find('#addproduct_1').attr('id', 'addproduct_' + formCount);
+        formClone.find('#name_1').attr('id', 'name_' + formCount);
+        formClone.find('#price_1').attr('id', 'price_' + formCount);
+        formClone.find('#quantity_1').attr('id', 'quantity_' + formCount);
+        formClone.find('#categories_1').attr('id', 'categories_' + formCount);
+        formClone.find('#subcategories_1').attr('id', 'subcategories_' + formCount);
+
+        // Ajoute le formulaire cloné à la page
+        $('#form_container').append(formClone);
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        let tbody_product = $('#tbody_product');
+        setInterval(function() {
+            $.ajax({
+                url: "{% url 'getdata' %}",
+                method: "GET",
+                success: function(response) {
+                    tbody_product.empty(); 
+                    if (response && response.data) {
+                        $.each(response.data, function(index, product) {
+                            tbody_product.append(
+                                "<tr>" +
+                                "<td>" + product.id + "</td>" +
+                                "<td>" + product.name + "</td>" +
+                                "<td>" + product.price + "</td>" +
+                                "<td>" + product.quantity + "</td>" +
+                                "</tr>"
+                            );
+                        });
+                    }
+                },
+                error: function(error) {
+                    console.error("Error fetching data:", error);
+                },
+            });
+        }, 1000); 
+    });
+</script>
+
+<script>
+    $('#categories_1').on('change', function() {
+        let categories = $('#categories_1').val();
+        $.ajax({
+            url: "{% url 'home' %}",
+            type: "GET",
+            data: {
+                categories: categories,
+                action: "getSubcategory"
+            },
+            success: function(response) {
+                $('#subcategories_1').empty();
+                if (response.subcat.length > 0) {
+                    $('#subcategories_1').append(`<option>--------</option>`);
+                }
+                for (key in response.subcat) {
+                    var temp = `<option value="${response.subcat[key].id}">${response.subcat[key].name}</option>`;
+                    $('#subcategories_1').append(temp);
+                }
+            },
+            error: function(error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    });
+</script>
+
+<script>
+    $('#addproduct_1').on("click", function() {
+        $.ajaxSetup({
+            headers: { "X-CSRFToken": '{{ csrf_token }}' }
+        });
+
+        $.ajax({
+            url: "{% url 'home' %}",
+            type: "POST",
+            data: {
+                name: $('#name_1').val(),
+                price: $('#price_1').val(),
+                quantity: $('#quantity_1').val(),
+                subcategory: $('#subcategories_1').val(),
+                action: "addproduct",
+            },
+            success: function(response) {
+                alert("Product added successfully");
+                $('#name_1').val('');
+                $('#price_1').val('');
+                $('#quantity_1').val('');
+                $('#subcategories_1').val('');
+            },
+            error: function(error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    });
+</script>
+{% endblock script %}
